@@ -1,0 +1,13 @@
+<form action="">
+    <label for="product_name">Nombre producto:</label>
+    <input id="product_name" type="text" required [(ngModel)]="new_product.name"  name="product_name"/>
+    <br/>
+    <label for="product_price">Precio producto:</label>
+    <input id="product_price" type="number" required [(ngModel)]="new_product.price" name="product_price" />
+    <br/>
+    <label for="product_description">Descripcion producto:</label>
+    <input id="product_description" type="text" required [(ngModel)]="new_product.description" name="product_description" />
+    <br/>
+    <button (click)="insert_product()" *ngIf="!update">Add</button>
+    <button (click)="update_product()" *ngIf="update">Update</button>
+</form>
