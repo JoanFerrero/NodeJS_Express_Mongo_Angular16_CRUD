@@ -16,11 +16,6 @@ export class ProductsAddComponent implements OnInit {
   update: Boolean = false;
   submitted = false;
 
-  new_product: Product = {
-    name: "",
-    price: 0,
-    description: "",
-  }
   form: FormGroup = new FormGroup({
     name: new FormControl(''),
     price: new FormControl(0),
@@ -32,20 +27,22 @@ export class ProductsAddComponent implements OnInit {
     private product_service: ProductService, 
     private router: Router, 
     private toastrService: ToastrService,
-    private formBuilder: FormBuilder) { }
+    private formBuilder: FormBuilder
+  ) { }
 
   ngOnInit(): void {
     if(this.route.snapshot.params["slug"]) {
       this.get_product(this.route.snapshot.params["slug"]);
       this.update = true;
+    } else {
+      this.form = this.formBuilder.group(
+        {
+          name: ['', Validators.required],
+          price: [0, Validators.required],
+          description: ['', Validators.required]
+        }
+      )
     }
-    this.form = this.formBuilder.group(
-      {
-        name: ['', Validators.required],
-        price: [0, Validators.required],
-        description: ['', Validators.required]
-      }
-    )
   }
 
   get f(): { [key: string]: AbstractControl } {
@@ -66,7 +63,13 @@ export class ProductsAddComponent implements OnInit {
   get_product(slug: string): void {
     this.product_service.getOne(slug).subscribe({
       next: data => {
-        this.new_product = data;
+        this.form = this.formBuilder.group(
+          {
+            name: [data.name, Validators.required],
+            price: [data.price, Validators.required],
+            description: [data.description, Validators.required]
+          }
+        )
       },
       error: e => {
         console.error(e);
@@ -84,7 +87,7 @@ export class ProductsAddComponent implements OnInit {
   }
 
   update_product(): void {
-    this.product_service.update_product(this.new_product, this.route.snapshot.params["slug"]).subscribe({
+    this.product_service.update_product(this.form.value, this.route.snapshot.params["slug"]).subscribe({
       next: data => {
         this.router.navigate(['/product'])
         this.toastrService.success("This product has been update")
