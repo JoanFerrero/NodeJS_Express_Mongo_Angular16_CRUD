@@ -34,15 +34,14 @@ export class ProductsAddComponent implements OnInit {
     if(this.route.snapshot.params["slug"]) {
       this.get_product(this.route.snapshot.params["slug"]);
       this.update = true;
-    } else {
-      this.form = this.formBuilder.group(
-        {
-          name: ['', Validators.required],
-          price: [0, Validators.required],
-          description: ['', Validators.required]
-        }
-      )
     }
+    this.form = this.formBuilder.group(
+      {
+        name: ['', Validators.required],
+        price: [0, Validators.required],
+        description: ['', Validators.required]
+      }
+    )
   }
 
   get f(): { [key: string]: AbstractControl } {
@@ -63,13 +62,11 @@ export class ProductsAddComponent implements OnInit {
   get_product(slug: string): void {
     this.product_service.getOne(slug).subscribe({
       next: data => {
-        this.form = this.formBuilder.group(
-          {
-            name: [data.name, Validators.required],
-            price: [data.price, Validators.required],
-            description: [data.description, Validators.required]
-          }
-        )
+        this.form.setValue({
+          name: data.name, 
+          price: data.price, 
+          description: data.description
+        })
       },
       error: e => {
         console.error(e);
@@ -94,5 +91,4 @@ export class ProductsAddComponent implements OnInit {
       }
     })
   }
-
 }
